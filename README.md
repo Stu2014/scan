@@ -16,3 +16,4 @@ optional arguments:
   -t THREADS  Num of scan threads,default 10
 
 ```
+### [批量爬虫脚本](https://github.com/Stu2014/scan/blob/master/shiro_scan.py)
