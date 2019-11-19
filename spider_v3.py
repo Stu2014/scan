@@ -9,7 +9,7 @@
 
 import random
 import urllib2,re,requests
-import time
+import time,os
 
 import sys
 
@@ -282,9 +282,10 @@ def SRC_spider(url, log,crawl_deepth=3):
 
 if __name__ == '__main__':
     url = 'http://www.wuhubtv.com'
+    os.system("mkdir sp_result")
     craw_deepth =5
     usage = '''
-        python spider_v3.py  1.txt 5   --> url为待爬取的网站地址，5为爬取深度，可以不设，默认为5。
+        python spider_v3.py  1.txt 5   --> 1.txt为待爬取的网站地址，5为爬取深度，可以不设，默认为5。
         '''
     try:
         if len(sys.argv) ==2:
@@ -299,6 +300,7 @@ if __name__ == '__main__':
         with open (sys.argv[1]) as f:
             for a in f:
                 url = a.strip()
+                print url
                 if url.find("http") >= 0:
                     pass
                 else:
@@ -308,7 +310,7 @@ if __name__ == '__main__':
                 print "domain_url:" + domain_url
                 spider = Spider(url, domain_url, urlprotocol)
                 urllist = spider.crawler(craw_deepth)
-                writelog(domain_url+'.txt', urllist)
+                writelog("./sp_result/"+domain_url+'.txt', urllist)
                 # print urllist
                 print '-' * 20 + url + '-' * 20
                 for sublurl in urllist:
