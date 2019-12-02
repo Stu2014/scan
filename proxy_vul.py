@@ -3,7 +3,7 @@
 
 
 import datetime
-from urllib import request
+import urllib.request
 import gevent, sys, re
 from gevent import monkey
 gevent.monkey.patch_all()
@@ -14,16 +14,16 @@ poc = "http://httpbin.org/ip"
 
 def useProxy(site):
     try:
-        res = urllib.request.urlopen(poc, proxies={'http': site},timeout=3).read()
+        res = urllib.request.urlopen(poc, proxies={'http': site},timeout=3).read().decode()
         return res
     except:
         return getIP()
 
 def getIP():
     try:
-        res = urllib.request.urlopen(poc).read()
+        res = urllib.request.urlopen(poc).read().decode()
         return res
-    except:
+    except Exception as e:
         return 0
 
 def getSite(filename):
@@ -46,7 +46,7 @@ def isIP(ip):
 
 def isVul(site):
     resA = getIP()
-    #print resA
+    # print(resA)
     resB = useProxy(site)
     #print resB
     if resA == resB or not isIP(resB):
