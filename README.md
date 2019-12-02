@@ -16,4 +16,13 @@ optional arguments:
   -t THREADS  Num of scan threads,default 10
 
 ```
-### [批量爬虫脚本](https://github.com/Stu2014/scan/blob/master/shiro_scan.py)
+### [批量爬虫脚本](https://github.com/Stu2014/scan/blob/master/spider_v3.py)
+
+```
+python spider_v3.py domain.txt
+```
+### [批量扫描代理脚本](https://github.com/Stu2014/scan/blob/master/proxy_vul.py)
+
+```
+python proxy_vul.py domain.txt
+```
