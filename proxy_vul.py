@@ -39,8 +39,14 @@ def getSite(filename):
 
 def isIP(ip):
     compileIP = re.compile('^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$')
-    if compileIP.match(ip):
-        return True
+    try:
+        if compileIP.match(ip):
+            return True
+        else:
+            return False
+    except:
+        return False
+
     else:
         return False
 
