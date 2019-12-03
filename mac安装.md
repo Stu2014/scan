@@ -1,6 +1,6 @@
 mac 安装
-https://github.com/yanxiu0614/subdomain3.git
 ```
+https://github.com/yanxiu0614/subdomain3.git
 burp
 sqlmap
 nmap
