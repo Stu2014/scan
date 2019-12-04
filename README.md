@@ -26,3 +26,5 @@ python spider_v3.py domain.txt
 ```
 python proxy_vul.py domain.txt
 ```
+### [批量扫描fastjson脚本](https://github.com/Stu2014/scan/blob/master/fastjson_rce.py)
+
