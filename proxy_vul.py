@@ -3,26 +3,28 @@
 
 
 import datetime
-import urllib.request
+import requests
 import gevent, sys, re
 from gevent import monkey
 gevent.monkey.patch_all()
 
 nowTime = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
 
-poc = "http://httpbin.org/ip"
+poc = 'http://httpbin.org/ip'
 
-def useProxy(site):
+def useProxy(pro_web):
+    print(pro_web)
     try:
-        res = urllib.request.urlopen(poc, proxies={'http': site},timeout=3).read().decode()
+        res = requests.get(poc, proxies={'http': pro_web},timeout=3).text
         return res
     except:
         return getIP()
 
+
 def getIP():
     try:
-        res = urllib.request.urlopen(poc).read().decode()
-        return res
+        res = requests.get(poc).text
+        return(res)
     except Exception as e:
         return 0
 
@@ -54,7 +56,7 @@ def isVul(site):
     resA = getIP()
     # print(resA)
     resB = useProxy(site)
-    #print resB
+    # print(resB)
     if resA == resB or not isIP(resB):
         print("\033[1;33m[INFO]\033[0m No Vulnerability!")
     else:
