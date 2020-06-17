@@ -42,4 +42,7 @@ if __name__ == '__main__':
 		file=sys.argv[1]
 	for url in open(file) :
 		check_vul(url.strip())
-	sendresult(vuldomain)
+	if vuldomain.strip() != '':
+		sendresult(vuldomain)
+	else:
+		pass
