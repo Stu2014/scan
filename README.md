@@ -28,3 +28,5 @@ python proxy_vul.py domain.txt
 ```
 ### [批量扫描fastjson脚本](https://github.com/Stu2014/scan/blob/master/fastjson_rce.py)
 
+### [spf检测脚本](https://github.com/Stu2014/scan/blob/master/spfcheck.py)
+
