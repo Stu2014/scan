@@ -1,6 +1,6 @@
 # scan
 ## 工作中需要的脚本
-## 勉强凑合用吧。
+## 需要请Star
 
 ###  [apache shiro 反序列化批量扫描脚本 shiroscan ](https://github.com/Stu2014/scan/blob/master/shiro_scan.py)
 ```
