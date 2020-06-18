@@ -1,9 +1,10 @@
 #coding:utf-8
 import dns.resolver
 import requests,json,sys
+import argparse
 
 vuldomain=""
-tokenurl="https://oapi.dingtalk.com/robot/send?access_token="
+tokenurl="https://oapi.dingtalk.com/robot/send?access_token=5028b64d0477496e3aff8ba49556bf6b3ddcc444b023f0975fe466fd2976bacf"
 headers ={"Content-Type": "application/json"}
 
 #检测是否配置spf
@@ -19,30 +20,42 @@ def check_vul(url):
             return True
     except dns.resolver.NoAnswer:
         vuldomain+=url+"\n"
+        return True
     except dns.exception.Timeout:
-        pass
+        return False
+    except:
+        return False
 
 
 #提醒
 def sendresult(vuldomain):
     # vuldomain
     ding={
-        "msgtype": "text", 
+        "msgtype": "text",
         "text": {
             "content": "以下spf未配置，请检查!\n%s" % vuldomain
         }
     }
-    res=requests.post(url=tokenurl,data=json.dumps(ding),headers=headers)
+    try:
+        res=requests.post(url=tokenurl,data=json.dumps(ding),headers=headers)
+    except:
+        pass
 
 
 if __name__ == '__main__':
-    if sys.argv == 1:
-        print("python spfcheck.py targets.txt")
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter,
+                                    description='SPF NOT SET Scanner.By Stu.',
+                                    usage='spfcheck.py [optional]')
+    parser.add_argument('-f',metavar='File',type=str,default='url.txt',help='Put Web url in url.txt')
+    parser.add_argument('-u',metavar='Url',type=str,help='Put a Web url')
+
+    if len(sys.argv) == 1:
+        sys.argv.append('-h')
+    args = parser.parse_args()
+    if args.u is None:
+      for url in open(args.f) :
+          check_vul(url.strip())
     else:
-        file=sys.argv[1]
-    for url in open(file) :
-        check_vul(url.strip())
+        check_vul(args.u)
     if vuldomain.strip() != '':
         sendresult(vuldomain)
-    else:
-        pass
