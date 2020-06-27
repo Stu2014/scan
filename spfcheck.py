@@ -4,6 +4,7 @@ import requests,json,sys
 import argparse
 
 vuldomain=""
+#token 配置关键字spf
 tokenurl="https://oapi.dingtalk.com/robot/send?access_token=5028b64d0477496e3aff8ba49556bf6b3ddcc444b023f0975fe466fd2976bacf"
 headers ={"Content-Type": "application/json"}
 
