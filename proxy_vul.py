@@ -1,74 +1,73 @@
-#-*- coding:utf-8 -*-
-#Author: Vulkey_Chen
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+# @Time    : 2020/9/16 4:48 下午
+# @Author  : Stu.
+# @Email   : h4ckst5@qq.com
+# @File    : http_proxy_vuln.py
+# 扫描代理模块
 
-
-import datetime
 import requests
-import gevent, sys, re
-from gevent import monkey
-gevent.monkey.patch_all()
+import random
+import queue
+import warnings,sys
+from threading import Thread
+from urllib.parse import urlparse
+warnings.filterwarnings("ignore")
 
-nowTime = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+httpQueue = queue.Queue()
 
-poc = 'http://httpbin.org/ip'
-
-def useProxy(pro_web):
-    print(pro_web)
-    try:
-        res = requests.get(poc, proxies={'http': pro_web},timeout=3).text
-        return res
-    except:
-        return getIP()
-
-
-def getIP():
-    try:
-        res = requests.get(poc).text
-        return(res)
-    except Exception as e:
-        return 0
-
-def getSite(filename):
-    f = open(filename)
-    res = []
-    for line in f:
-        if line.find("http") >= 0:
+def get_url():
+    while True:
+        try:
+            hosts = httpQueue.get(timeout=0.1)
+        except:
+            break
+        host = hosts[0]
+        port = hosts[1] or 80
+        proxies_http = {
+            "http": "http://{}:{}".format(host, port),
+            "https": "https://{}:{}".format(host, port),
+        }
+        # print(host+str(port)+'\n')
+        random_str_ = random_str(8)
+        try:
+            response = requests.get("https://"+str(host)+'.'+str(port)+'.'+random_str_+".f4c8e390.dnslog.link/", proxies=proxies_http, timeout=5, verify=False)
+            if getdnslog(random_str_) == "True":
+                print("[200] {}:{} {}".format(host, port, random_str_))
+                with open("result.txt", 'a') as f:
+                    f.write("[http-proxy]"+host+':'+str(port)+' '+random_str_+'\n')
+        except Exception as e:
+            print(e)
             pass
-        else:
-            line = "http://"+line
-        res.append(line.replace("\n",""))
-    return res
 
-def isIP(ip):
-    compileIP = re.compile('^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$')
-    try:
-        if compileIP.match(ip):
-            return True
-        else:
-            return False
-    except:
-        return False
+# 查看dnslog状态
+def getdnslog(random_str):
+    dns_check = "https://admin.dnslog.link/api/web/f4c8e390/%s/" % random_str  # token 替换为http://admin.dnslog.link平台字符串
+    res = requests.get(dns_check, timeout=5, verify=False)
+    return res.text.strip()
 
-    else:
-        return False
+# 取得随机数
+def random_str(len):
+    str1 = ""
+    for i in range(len):
+        str1 += (random.choice("QWERTYUIOPASDFGHJKLZXCVBNM1234567890"))
+    return str(str1)
 
-def isVul(site):
-    resA = getIP()
-    # print(resA)
-    resB = useProxy(site)
-    # print(resB)
-    if resA == resB or not isIP(resB):
-        print("\033[1;33m[INFO]\033[0m No Vulnerability!")
-    else:
-        with open("proxy_vul_"+str(nowTime)+".txt","a") as f:
-            f.write(str(site)+"--"+str(resB)+"\n")
-        print("\033[1;31m[INFO]\033[0m Existing Vulnerability!")
-        print("\033[1;36m[INFO]\033[0m Site:[ {0} ] -> RealIP:[ {1} ]".format(site, resB))
+def get_host_port(filename):
+    for x in open(filename,'r'):
+        url = x.strip()
+        port = urlparse(url).port
+        host = urlparse(url).hostname
+        httpQueue.put([host, port])
+    proxy_threads = []
+    for x in range(30):
+        p = Thread(target=get_url)
+        proxy_threads.append(p)
+        p.start()
 
-
+    for p in proxy_threads:
+        p.join()
 if __name__ == '__main__':
-    if len(sys.argv)==2:
-        tasks = [gevent.spawn(isVul, url) for url in getSite(sys.argv[1])]
-        gevent.joinall(tasks)
-    else:
-        print("python proxy_vul.py domain.txt")
+    filename = sys.argv[1]#存在http协议
+    get_host_port(filename)
+
