@@ -35,3 +35,5 @@ python proxy_vul.py domain.txt
 
 ### [钉钉和server酱推送脚本](https://github.com/Stu2014/scan/blob/master/push.py)
 
+### [目录穿越扫描](https://github.com/Stu2014/scan/blob/master/dirvuln.py)
+
